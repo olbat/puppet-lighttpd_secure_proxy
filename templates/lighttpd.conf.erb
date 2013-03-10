@@ -1,0 +1,47 @@
+server.modules = (
+#  "mod_access",
+#  "mod_alias",
+#  "mod_redirect",
+  "mod_compress",
+  "mod_proxy",
+  "mod_auth",
+)
+
+server.document-root = "/var/www"
+server.errorlog = "/var/log/lighttpd/error.log"
+server.pid-file = "/var/run/lighttpd.pid"
+server.username = "www-data"
+server.groupname = "www-data"
+server.port = <%= @port %>
+
+index-file.names = ( "index.php", "index.html" )
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
+#url.access-deny = ( "~", ".inc" )
+
+compress.cache-dir = "/var/cache/lighttpd/compress/"
+compress.filetype = ( "application/javascript", "text/css", "text/html", "text/plain" )
+
+<% if !@certfile.nil? and !@certfile.empty? %>
+ssl.engine  = "enable"
+ssl.pemfile = "<%= @certfile %>"
+<% end %>
+<% @exports.each do |conf| %>
+$HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
+  <% if conf['htpasswd_file'] %>
+  auth.backend = "htpasswd"
+  auth.backend.htpasswd.userfile = "<%= File.join(@htpasswd_path,conf['htpasswd_file']) %>" 
+  auth.require = (
+    "" => (
+      "method" => "basic",
+      "realm" => "<%= conf['htpasswd_file'] %>",
+      "require" => "valid-user" 
+    )
+  )
+  <% end %>
+  proxy.server = (
+    "" => (
+      ( "host" => "<%= conf['address'] %>", "port" => <%= conf['port'] %> )
+    )
+  )
+}
+<% end %>

@@ -4,9 +4,9 @@ This class installs/configures the lighttpd web server to create secured proxies
 
 == Parameters: 
 
-$certificate:: 
-$port:: Defaults to 443.
-$exports:: An array describing the resources to be exported through the proxy for a specific service. Defaults to []. Each elements have to be a hash with the keys: +path_regexp+, the regexp that represents the path of this service on the web server; +address+, the address of the service to be proxied; +port+, the port the service is listening on; +htpasswd_file+ the htpasswd file containing the users passwords for this service. The file should be created with lighttpd_secure_proxy::htpasswd_file. Only the filename should be precised.
+$certificate:: The ssl certificate used to encrypt data (no ssl if not specified).
+$port:: The port the server have to listen on. Defaults to 443.
+$exports:: An array describing the resources to be exported through the proxy for a specific service. Defaults to []. Each elements have to be a hash with the keys: +path_regexp+, the regexp that represents the path of this service on the web server; +address+, the address of the service to be proxied; +port+, the port the service is listening on; +htpasswd_file+ the htpasswd file containing the users passwords for this service (no password if the field is not precised). The file should be created with lighttpd_secure_proxy::htpasswd_file. Only the filename should be precised.
 
 == Requires: 
 

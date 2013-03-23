@@ -28,15 +28,21 @@ ssl.pemfile = "<%= @certfile %>"
 <% @exports.each do |conf| %>
 $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
   <% if conf['htpasswd_file'] %>
-  auth.backend = "htpasswd"
-  auth.backend.htpasswd.userfile = "<%= File.join(@htpasswd_path,conf['htpasswd_file']) %>" 
-  auth.require = (
-    "" => (
-      "method" => "basic",
-      "realm" => "<%= conf['htpasswd_file'] %>",
-      "require" => "valid-user" 
+    <% if conf['trusted_net'] %>
+  $HTTP["remoteip"] != "<%= conf['trusted_net'] %>" {
+    <% end %>
+    auth.backend = "htpasswd"
+    auth.backend.htpasswd.userfile = "<%= File.join(@htpasswd_path,conf['htpasswd_file']) %>" 
+    auth.require = (
+      "" => (
+        "method" => "basic",
+        "realm" => "<%= conf['htpasswd_file'] %>",
+        "require" => "valid-user" 
+      )
     )
-  )
+    <% if conf['trusted_net'] %>
+  }
+    <% end %>
   <% end %>
   proxy.server = (
     "" => (

@@ -12,6 +12,9 @@ server.errorlog = "/var/log/lighttpd/error.log"
 server.pid-file = "/var/run/lighttpd.pid"
 server.username = "www-data"
 server.groupname = "www-data"
+<% if !@servername.nil? and !@servername.empty? %>
+server.name = "<%= @servername %>"
+<% end %>
 server.port = <%= @port %>
 
 index-file.names = ( "index.php", "index.html" )
@@ -24,6 +27,9 @@ compress.filetype = ( "application/javascript", "text/css", "text/html", "text/p
 <% if !@certfile.nil? and !@certfile.empty? %>
 ssl.engine  = "enable"
 ssl.pemfile = "<%= @certfile %>"
+  <% if !@authfile.nil? and !@authfile.empty? %>
+ssl.ca-file = "<%= @authfile %>"
+  <% end %>
 <% end %>
 <% @exports.each do |conf| %>
 $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {

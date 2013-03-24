@@ -4,7 +4,9 @@
 # 
 # == Parameters: 
 #
-# $certificate:: The ssl certificate used to encrypt data (no ssl if not specified).
+# $servername:: The domain name related to this server, optional.
+# $certificate:: The ssl certificate used to encrypt data (no ssl if not specified), usually a concatenation of a key and cert file.
+# $authority:: The authority certificate used to certify the secure connection (optional, even if +certificate+ is precised).
 # $port:: The port the server have to listen on. Defaults to 443.
 # $exports:: An array describing the resources to be exported through the proxy for a specific service. Defaults to []. Each elements have to be a hash with the keys: +path_regexp+, the regexp that represents the path of this service on the web server; +address+, the address of the service to be proxied; +port+, the port the service is listening on; +htpasswd_file+ the htpasswd file containing the users passwords for this service (no password if the field is not precised); +trusted_net+ the address (CIDR) of a tructed network, no password will be asked when accessing the service from this network. The +htpasswd_file+ file should be created with lighttpd_secure_proxy::htpasswd_file. Only the filename should be precised.
 #
@@ -15,7 +17,9 @@
 # == Sample Usage:
 #
 #  class {'lighttpd_secure_proxy':
+#    servername => 'www.domain.tld',
 #    certificate => 'puppet:///modules/lighttpd_secure_proxy/lighttpd.pem',
+#    authority => 'puppet:///modules/lighttpd_secure_proxy/authority.crt',
 #    exports => [
 #      {
 #        'path_regexp' => '^/bittorrent',
@@ -28,7 +32,9 @@
 #  }
 #
 class lighttpd_secure_proxy (
+  $servername = undef,
   $certificate,
+  $authority = undef,
   $port = 443,
   $exports = [],
 ) {
@@ -47,6 +53,16 @@ class lighttpd_secure_proxy (
       require => Package['lighttpd'],
       before => File['lighttpd.conf'],
       source => $certificate,
+    }
+    if $authority {
+      $authfile = "${config_path}/lighttpd.crt"
+      file { 'lighttpd.crt':
+        path => "${config_path}/lighttpd.crt",
+        ensure => file,
+        require => Package['lighttpd'],
+        before => File['lighttpd.conf'],
+        source => $authority,
+      }
     }
   }
   else

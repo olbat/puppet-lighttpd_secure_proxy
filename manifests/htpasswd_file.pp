@@ -24,6 +24,9 @@ define lighttpd_secure_proxy::htpasswd_file($srcfile,$destfile) {
   file { $destfile:
     path => "${lighttpd_secure_proxy::htpasswd_path}/${destfile}",
     ensure => file,
+    owner => 'www-data',
+    group => 'www-data',
+    mode => 640,
     require => Package['lighttpd'],
     source => $srcfile,
   }

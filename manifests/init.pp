@@ -56,6 +56,9 @@ class lighttpd_secure_proxy (
     file { $certfile:
       ensure => file,
       require => Package['lighttpd'],
+      owner => root,
+      group => root,
+      mode => 640,
       before => File['lighttpd.conf'],
       source => $certificate,
     }
@@ -64,6 +67,9 @@ class lighttpd_secure_proxy (
       file { $cafile:
         ensure => file,
         require => Package['lighttpd'],
+        owner => root,
+        group => root,
+        mode => 644,
         before => File['lighttpd.conf'],
         source => $intermediate_ca,
       }
@@ -77,6 +83,9 @@ class lighttpd_secure_proxy (
   file { 'lighttpd.conf':
     path => "${config_path}/lighttpd.conf",
     ensure => file,
+    owner => root,
+    group => root,
+    mode => 644,
     require => Package['lighttpd'],
     content => template("${module_name}/lighttpd.conf.erb")
   }

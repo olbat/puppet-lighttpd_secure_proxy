@@ -12,9 +12,9 @@ server.errorlog = "/var/log/lighttpd/error.log"
 server.pid-file = "/var/run/lighttpd.pid"
 server.username = "www-data"
 server.groupname = "www-data"
-<% if !@servername.nil? and !@servername.empty? %>
+<% if !@servername.nil? and !@servername.empty? -%>
 server.name = "<%= @servername %>"
-<% end %>
+<% end -%>
 server.port = <%= @port %>
 
 index-file.names = ( "index.php", "index.html" )
@@ -24,7 +24,7 @@ static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
 compress.cache-dir = "/var/cache/lighttpd/compress/"
 compress.filetype = ( "application/javascript", "text/css", "text/html", "text/plain" )
 
-<% if !@certfile.nil? and !@certfile.empty? %>
+<% if !@certfile.nil? and !@certfile.empty? -%>
 ssl.engine  = "enable"
 ssl.pemfile = "<%= @certfile %>"
   <% if !@authfile.nil? and !@authfile.empty? %>
@@ -33,10 +33,10 @@ ssl.ca-file = "<%= @authfile %>"
 <% end %>
 <% @exports.each do |conf| %>
 $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
-  <% if conf['htpasswd_file'] %>
-    <% if conf['trusted_net'] %>
+  <%- if conf['htpasswd_file'] -%>
+    <%- if conf['trusted_net'] -%>
   $HTTP["remoteip"] != "<%= conf['trusted_net'] %>" {
-    <% end %>
+    <%- end -%>
     auth.backend = "htpasswd"
     auth.backend.htpasswd.userfile = "<%= File.join(@htpasswd_path,conf['htpasswd_file']) %>" 
     auth.require = (
@@ -46,14 +46,14 @@ $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
         "require" => "valid-user" 
       )
     )
-    <% if conf['trusted_net'] %>
+    <%- if conf['trusted_net'] -%>
   }
-    <% end %>
-  <% end %>
+    <%- end -%>
+  <%- end -%>
   proxy.server = (
     "" => (
       ( "host" => "<%= conf['address'] %>", "port" => <%= conf['port'] %> )
     )
   )
 }
-<% end %>
+<% end -%>

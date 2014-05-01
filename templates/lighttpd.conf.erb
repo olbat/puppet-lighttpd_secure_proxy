@@ -32,6 +32,18 @@ ssl.ca-file = "<%= @cafile %>"
   <%- end -%>
 <% end -%>
 
+mimetype.assign = (
+  ".html" => "text/html",
+  ".htm" => "text/html",
+  ".css" => "text/css",
+  ".js" => "text/javascript",
+  ".txt" => "text/plain",
+  ".png" => "image/png",
+  ".jpeg" => "image/jpeg",
+  ".jpg" => "image/jpeg",
+  ".gif" => "image/gif",
+)
+
 <% @exports.each do |conf| -%>
 $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
   <%- if conf['htpasswd_file'] -%>

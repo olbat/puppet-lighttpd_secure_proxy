@@ -27,11 +27,12 @@ compress.filetype = ( "application/javascript", "text/css", "text/html", "text/p
 <% if !@certfile.nil? and !@certfile.empty? -%>
 ssl.engine  = "enable"
 ssl.pemfile = "<%= @certfile %>"
-  <% if !@authfile.nil? and !@authfile.empty? %>
-ssl.ca-file = "<%= @authfile %>"
-  <% end %>
-<% end %>
-<% @exports.each do |conf| %>
+  <%- if !@cafile.nil? and !@cafile.empty? -%>
+ssl.ca-file = "<%= @cafile %>"
+  <%- end -%>
+<% end -%>
+
+<% @exports.each do |conf| -%>
 $HTTP["url"] =~ "<%= conf['path_regexp'] %>" {
   <%- if conf['htpasswd_file'] -%>
     <%- if conf['trusted_net'] -%>

@@ -1,8 +1,4 @@
 server.modules = (
-#  "mod_access",
-#  "mod_alias",
-#  "mod_redirect",
-  "mod_compress",
   "mod_proxy",
   "mod_auth",
 )
@@ -17,12 +13,9 @@ server.name = "<%= @servername %>"
 <% end -%>
 server.port = <%= @port %>
 
-index-file.names = ( "index.php", "index.html" )
+index-file.names = ( "index.html" )
 static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
-#url.access-deny = ( "~", ".inc" )
-
-compress.cache-dir = "/var/cache/lighttpd/compress/"
-compress.filetype = ( "application/javascript", "text/css", "text/html", "text/plain" )
+url.access-deny = ( ".inc" )
 
 <% if !@certfile.nil? and !@certfile.empty? -%>
 ssl.engine  = "enable"

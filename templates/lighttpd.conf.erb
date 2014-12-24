@@ -19,6 +19,11 @@ url.access-deny = ( ".inc" )
 
 <% if !@certfile.nil? and !@certfile.empty? -%>
 ssl.engine  = "enable"
+
+# poodlebleed, CVE-2014-3566 (see http://poodlebleed.com/)
+ssl.use-sslv2 = "disable" 
+ssl.use-sslv3 = "disable"
+
 ssl.pemfile = "<%= @certfile %>"
   <%- if !@cafile.nil? and !@cafile.empty? -%>
 ssl.ca-file = "<%= @cafile %>"
